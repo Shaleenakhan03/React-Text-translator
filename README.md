@@ -1,7 +1,6 @@
 Text Translator
 
-An AI-powered translation web application built using React.js,
-Tailwind CSS, Vite, and RapidAPI.
+AI Translator is a responsive web-based translation application developed using React.js, Tailwind CSS, Vite, and RapidAPI. It allows users to translate text between multiple languages while providing features such as translation history, favorites, recently used languages, copy functionality, and customizable appearance settings.
 
 ## 🚀 Features
 - Translate text between multiple languages
