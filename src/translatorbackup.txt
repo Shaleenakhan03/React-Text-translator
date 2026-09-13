@@ -1,0 +1,163 @@
+import { useState } from "react";
+import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
+
+function App() {
+  const [text, setText] = useState("");
+  const [fromLanguage, setFromLanguage] = useState("en");
+  const [language, setLanguage] = useState("hi");
+  const [translatedText, setTranslatedText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const translateText = async () => {
+
+    if (!text.trim()) {
+      alert("Please enter some text.");
+      return;
+    }
+
+    const url = `https://free-google-translator.p.rapidapi.com/external-api/free-google-translator?from=${fromLanguage}&to=${language}&query=${encodeURIComponent(text)}`;
+
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-rapidapi-host": import.meta.env.VITE_RAPIDAPI_HOST,
+        "x-rapidapi-key": import.meta.env.VITE_RAPIDAPI_KEY,
+      },
+      body: JSON.stringify({
+        translate: "rapidapi",
+      }),
+    };
+
+    try {
+      setLoading(true);
+      const response = await fetch(url, options);
+      const result = await response.json();
+
+      console.log(result);
+
+      setTranslatedText(result.translation);
+    } catch (error) {
+      console.error(error);
+      alert("Translation failed!");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const copyTranslation = () => {
+    navigator.clipboard.writeText(translatedText);
+    alert("Translation copied!");
+  };
+
+  return (
+    <>
+      <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      <Sidebar
+        sidebarOpen={sidebarOpen}
+        toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+      />
+      <div className="min-h-screen bg-gradient-to-br from-pink-300 via-purple-300 to-blue-200 flex items-center justify-center p-6" >
+        <div className="bg-pink-100 shadow-lg rounded-lg p-8 w-full max-w-xl">
+
+          <h1 className="text-4xl font-bold text-center text-gray-800 mb-2">
+            Multi Language Text Translator
+          </h1>
+          <p className="text-center text-gray-500 mb-8">
+            Translate text instantly into multiple languages
+          </p>
+          <label className="font-semibold text-lg block mb-2">
+            Enter Text
+          </label>
+
+          <textarea
+            rows="5"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Type your text here..."
+            className="w-full border-2 border-gray-300 rounded-2xl p-4 focus:outline-none focus:ring-4 focus:ring-blue-400 resize-none"
+          ></textarea>
+
+          <label className="font-semibold mt-5 block">
+            From Language
+          </label>
+
+          <select
+            value={fromLanguage}
+            onChange={(e) => setFromLanguage(e.target.value)}
+            className="w-full border rounded-lg p-3 mt-2"
+          >
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="ur">Urdu</option>
+            <option value="fr">French</option>
+            <option value="es">Spanish</option>
+            <option value="de">German</option>
+            <option value="ar">Arabic</option>
+            <option value="ja">Japanese</option>
+            <option value="zh">Chinese</option>
+          </select>
+          <div className="flex justify-center my-5">
+
+            <button
+              onClick={() => {
+                const temp = fromLanguage;
+                setFromLanguage(language);
+                setLanguage(temp);
+              }}
+              className="bg-gray-200 px-4 py-2 rounded-lg my-3 hover:bg-gray-300"
+            >
+              🔄 Swap
+            </button>
+          </div>
+          <label className="font-semibold mt-5 block">
+            To Language
+          </label>
+
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="w-full border rounded-lg p-3 mt-2"
+          >
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="ur">Urdu</option>
+            <option value="fr">French</option>
+            <option value="es">Spanish</option>
+            <option value="de">German</option>
+            <option value="ar">Arabic</option>
+            <option value="ja">Japanese</option>
+            <option value="zh">Chinese</option>
+          </select>
+
+          <button
+            onClick={translateText}
+            className="w-full bg-blue-400 text-white py-3 rounded-lg mt-6 hover:bg-blue-600"
+          >
+            {loading ? "Translating..." : "Translate"}
+          </button>
+
+          <h2 className="text-xl font-semibold mt-6">
+            Translated Text
+          </h2>
+
+          <div className=" border rounded-lg p-4 mt-2 min-h-[100px]">
+            {translatedText}
+          </div>
+
+          <button
+            onClick={copyTranslation}
+            className="bg-purple-300 text-white px-4 py-2 rounded-lg mt-3 hover:bg-green-400"
+          >
+            📋 Copy Translation
+          </button>
+          <div className="text-center mt-8 text-gray-400 text-sm">
+            Developed by <strong>Shaleena khan</strong> ❤️ using React, Tailwind CSS & RapidAPI
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default App;
